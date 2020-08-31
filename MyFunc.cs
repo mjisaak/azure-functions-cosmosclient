@@ -7,13 +7,21 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Microsoft.Azure.Cosmos;
 
 namespace azure_functions_cosmosclient
 {
-    public static class MyFunc
+    public class MyFunc
     {
+        private readonly CosmosClient cosmosClient;
+
+        public MyFunc(CosmosClient cosmos)
+        {
+            cosmosClient = cosmos;
+        }
+
         [FunctionName("MyFunc")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -28,6 +36,9 @@ namespace azure_functions_cosmosclient
             string responseMessage = string.IsNullOrEmpty(name)
                 ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
                 : $"Hello, {name}. This HTTP triggered function executed successfully.";
+
+
+            await cosmosClient.CreateDatabaseIfNotExistsAsync("mydb");
 
             return new OkObjectResult(responseMessage);
         }
