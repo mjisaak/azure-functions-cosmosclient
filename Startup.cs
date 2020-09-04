@@ -17,10 +17,10 @@ namespace azure_functions_cosmosclient
             .AddEnvironmentVariables()
             .Build();
 
-
         public override void Configure(IFunctionsHostBuilder builder)
         {
-           builder.Services.AddSingleton(s => {
+            builder.Services.AddSingleton(s =>
+            {
                 var connectionString = Configuration["CosmosDBConnection"];
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -30,7 +30,7 @@ namespace azure_functions_cosmosclient
 
                 return new CosmosClientBuilder(connectionString)
                     .Build();
-           });
+            });
         }
     }
 }
